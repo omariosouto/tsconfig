@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "tsconfig-lib",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "main": "index.js",
   "workspaces": [
     "examples/*",
@@ -10,7 +10,8 @@
   "scripts": {
     "example": "npm exec --workspace=example-nextjs",
     "dev:example": "npm run example -- npm run dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lib": "npm exec --workspace=@omariosouto/tsconfig",
+    "publish-release": "npm run lib -- npm publish"
   },
   "keywords": [],
   "author": "",
