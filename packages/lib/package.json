@@ -1,0 +1,15 @@
+{
+  "name": "@omariosouto/tsconfig",
+  "version": "1.0.0",
+  "main": "index.json",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "description": ""
+}

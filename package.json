@@ -1,0 +1,18 @@
+{
+  "name": "tsconfig-lib",
+  "version": "1.0.0",
+  "main": "index.js",
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "example": "npm exec --workspace=example-nextjs",
+    "dev:example": "npm run example -- npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

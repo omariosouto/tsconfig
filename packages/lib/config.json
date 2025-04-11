@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    // Target and module settings
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ESNext", "DOM"],
+    // Strictness & type checking
+    "strict": true, // Enables all strict type-checking options below
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,  // Makes catch variables unknown by default
+
+    // Linting-like checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Module interoperability
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    // Misc
+    "skipLibCheck": true, // Faster builds, but disables type checking of d.ts files
+    "isolatedModules": true // Especially important if using Babel or transpile-only tools
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
