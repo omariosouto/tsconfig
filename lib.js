@@ -46,6 +46,7 @@ const actions = {
     createGitCommit(); // ✅
     createGitTag();    // ✅
     pushGitTag();      // ✅
+    resetBetaCommit(); // ✅
   },
   "skip-release": () => {
 
@@ -65,6 +66,14 @@ function runBuild() {
 
 function mergePR() {
   log("🤖 - Merging the PR");
+}
+
+function resetBetaCommit() {
+  log("🤖 - Resetting the beta commit");
+  const gitCommand = `git reset HEAD~1`;
+
+  DEBUG && log(gitCommand);
+  !DEBUG && execSync(gitCommand, { stdio: "inherit" });
 }
 
 function updateChangelog() {
