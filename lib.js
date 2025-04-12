@@ -20,10 +20,8 @@
   const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.json"), "utf-8");
   const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
   // CI - GitHub Metadata
-  const PR_NUMBER = 1; // TODO: 🚫 Get it from CI
-  const PR_COMMENT = `   
-  bumper/release-beta
-`; // TODO: 🚫 Get it from CI
+  const PR_NUMBER = process.env.PR_NUMBER || CONFIG_FILE.mock.PR_NUMBER || (() => { throw new Error("PR_NUMBER not found") })();
+  const PR_COMMENT = process.env.PR_COMMENT || CONFIG_FILE.mock.PR_COMMENT || (() => { throw new Error("PR_COMMENT not found") })();
 
   if(!isABumperComment())
     return log("🤖 - [isABumperComment] Not a bumper comment, nothing to bump for now 😔");
