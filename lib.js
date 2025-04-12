@@ -45,6 +45,7 @@
         const commentID = await gh.addCommentToPR(`Creating a release...`);
         // TODO: Check if we are able to merge the PR
         !isPRMergeable && await gh.updateCommentOnPR(commentID, `PR is not mergeable, please ensure that it's validated and try again.`);
+        if (!isPRMergeable) return;
         runBuild();        // ✅
         updateVersion();   // ✅
         syncPackageJSON(); // ✅
