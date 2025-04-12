@@ -16,8 +16,14 @@ jobs:
       # [Common CI/CD Setup]
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v4
+      - name: "Check commit message"
+        id: checkMessage
+        run: |
+          echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
       # ====================
       - name: "Install Dependencies"
+        if: ${{ !contains(steps.checkMessage.outputs.message, '[skip-ci]') }}
         run: "npm ci"
       - name: "Test"
+        if: ${{ !contains(steps.checkMessage.outputs.message, '[skip-ci]') }}
         run: "npm run test"

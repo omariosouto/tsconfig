@@ -214,7 +214,7 @@ ${PACKAGE_JSON.version}
     function createGitCommit() {
       log("🤖 - Create git commit");
 
-      const gitCommand = `git add . && git commit -m "Commiting ${PACKAGE_JSON.version} - ${YEAR}-${MONTH}-${DAY}"`;
+      const gitCommand = `git add . && git commit -m "Commiting ${PACKAGE_JSON.version} - ${YEAR}-${MONTH}-${DAY} [skip-ci]"`;
 
       DEBUG &&
         log(gitCommand);
