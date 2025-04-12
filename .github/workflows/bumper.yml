@@ -4,19 +4,24 @@ on:
   issue_comment:
     types: [created]
 
+permissions:
+  contents: write   # Ensure we can read/checkout the fork code
+
 jobs:
   on-pr-comment:
-    if: ${{ github.event.issue.pull_request }}
+    if: ${{ github.event.issue.pull_request }}  # Only run if the comment is on a PR
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out PR branch
         uses: actions/checkout@v3
         with:
-          # Use the fork’s repo/branch if needed:
+          # Use the fork’s repo/branch if needed
           repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
-          # This is the branch name of the PR:
+          # This is the branch name of the PR
           ref: ${{ github.event.issue.pull_request.head.ref }}
+          # Fetch full history to ensure we are actually on the PR branch
+          fetch-depth: 0
 
       - name: Install dependencies
         run: npm ci
