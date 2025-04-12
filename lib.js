@@ -111,11 +111,10 @@ ${PACKAGE_JSON.version}
 
   async function mergePR() {
     log("🤖 - Merging the PR");
-    try {
-      await gh.mergePR();
-    } catch(error) {
-      log("🤖 - [mergePR] Error merging PR:", error);
-      throw new Error("Error merging PR - " + error.message);
+    const data = await gh.mergePR();
+    console.log("mergePR", data);
+    if(!data.status.startsWith("2")) {
+      throw new Error(data.message);
     }
   }
 
@@ -289,7 +288,6 @@ ${PACKAGE_JSON.version}
         });
 
         const data = await response.json();
-        console.log("%%%%% -", data);
         return data.id;
       },
       async updateCommentOnPR(commentId, newComment) {
