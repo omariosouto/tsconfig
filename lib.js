@@ -42,12 +42,13 @@
       "release-it": async () => {
         log("action: release-it");
         const commentID = await gh.addCommentToPR(`Creating a release...`);
+        // TODO: Check if we are able to merge the PR
+        !gh.isPRMergeable() && gh.updateCommentOnPR(commentID, `PR is not mergeable, please ensure that it's validated and try again.`);
         runBuild();        // ✅
         updateVersion();   // ✅
         syncPackageJSON(); // ✅
         updateChangelog(); // ✅
         createGitCommit(); // ✅
-        // TODO: Check if we are able to merge the PR
         pushToPR();        // ✅
         createGitTag();    // ✅
         pushGitTag();      // ✅
@@ -292,6 +293,19 @@ ${PACKAGE_JSON.version}
       .then(res => res.json());
 
     return {
+      async isPRMergeable() {
+        const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/pulls/${PR_NUMBER}`;
+        const response = await fetch(BASE_URL, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+        });
+
+        const data = await response.json();
+        return data.mergeable;
+      },
       async mergePR() {
         const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/pulls/${PR_NUMBER}/merge`;
         const response = await fetch(BASE_URL, {
