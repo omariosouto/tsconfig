@@ -247,8 +247,9 @@
             Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
           },
           body: JSON.stringify({ body: comment }),
-        });
-        console.log(`%%%%% - ${response}`);
+        })
+        .then(res => res.json());
+        console.log(`%%%%% - `, response);
         return response;
       },
       async getPRChangelogDescription() {
