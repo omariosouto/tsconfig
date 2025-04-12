@@ -76,7 +76,8 @@ ${PACKAGE_JSON.version}
       log("action: skip-release");
       const commentID = await gh.addCommentToPR(`Skipping release...`);
       await mergePR()
-        .then(async () => {
+        .then(async (data) => {
+          console.log(`[[[[[[]]]]]]`, data);
           await gh.updateCommentOnPR(commentID, `Release skipped successfully!`);
         })
         .catch(async (error) => {
@@ -112,7 +113,8 @@ ${PACKAGE_JSON.version}
   async function mergePR() {
     log("🤖 - Merging the PR");
     try {
-      await gh.mergePR();
+      const data = await gh.mergePR();
+      console.log("GitHub().mergePR", data);
     } catch(error) {
       log("🤖 - [mergePR] Error merging PR:", error);
       throw new Error("Error merging PR - " + error.message);
@@ -289,7 +291,6 @@ ${PACKAGE_JSON.version}
         });
 
         const data = await response.json();
-        console.log("%%%%% -", data);
         return data.id;
       },
       async updateCommentOnPR(commentId, newComment) {
