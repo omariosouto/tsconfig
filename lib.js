@@ -17,7 +17,6 @@ const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.js
 const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
 const PR_NUMBER = 1;
 const COMMAND_BUILD = "npm run build";
-const COMMAND_PUBLISH = "npm run publish:version";
 const MESSAGE = `
 ## Changelog
 Message to be added to the changelog
@@ -69,7 +68,11 @@ function runBuild() {
 
 function publishVersion() {
   log("🤖 - [publishVersion] Publishing version");
-  const command = `${COMMAND_PUBLISH}`;
+  const isBetaVersion = PACKAGE_JSON.version.includes("beta");
+
+  const command = isBetaVersion
+    ? `npm publish --tag beta --access public --prefix ${PATH_TO_PACKAGE}`
+    : `npm publish --access public --prefix ${PATH_TO_PACKAGE}`;
 
   DEBUG && log(command);
   !DEBUG && execSync(command, { stdio: "inherit" });
