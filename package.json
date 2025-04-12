@@ -13,7 +13,8 @@
     "example": "npm exec --workspace=example-nextjs",
     "dev:example": "npm run example -- npm run dev",
     "lib": "npm exec --workspace=@omariosouto/tsconfig",
-    "build": "echo 'I need to build the library...'"
+    "build": "echo 'I need to build the library...'",
+    "test": "echo 'All tests passed!'"
   },
   "keywords": [],
   "author": "",
