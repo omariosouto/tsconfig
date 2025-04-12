@@ -30,7 +30,7 @@
   const PR_DESCRIPTION = await gh.getPRChangelogDescription(); // get from PR description
   // SOLVED
   const DEBUG = CONFIG_FILE.debug || false;
-  const ACTION = PR_COMMENT.match(/bumper\/(release-beta|skip-release|relase-it)/)?.[1] || (() => { throw new Error("Action not found") })();
+  const ACTION = PR_COMMENT.match(/bumper\/(release-beta|skip-release|release-it)/)?.[1] || (() => { throw new Error("Action not found") })();
   const COMMAND_BUILD = CONFIG_FILE.buildCommand || (() => { throw new Error("Build command not found") })();
   const MESSAGE = PR_DESCRIPTION || (() => { throw new Error("PR description not found") })();
 
