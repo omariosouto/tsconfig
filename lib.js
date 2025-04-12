@@ -54,13 +54,13 @@
         publishVersion();  // ✅
         // await mergePR(); // 🚫
         await gh.updateCommentOnPR(commentID, (`
-        Release created successfully!
+Release created successfully!
               
-        - **Package**: [\`${PACKAGE_JSON.name}\`](https://github.com/omariosouto/tsconfig/releases/tag/v${PACKAGE_JSON.version})
-        - **Version**:
-        \`\`\`sh
-        ${PACKAGE_JSON.version}
-        \`\`\`
+- **Package**: [\`${PACKAGE_JSON.name}\`](https://github.com/omariosouto/tsconfig/releases/tag/v${PACKAGE_JSON.version})
+- **Version**:
+\`\`\`sh
+${PACKAGE_JSON.version}
+\`\`\`
         `
         ));
       },
