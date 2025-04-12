@@ -2,7 +2,6 @@
   // =========================================================
   // Imports
   // =========================================================
-
   const { execSync } = require("child_process");
   const fs = require("fs");
   const path = require("path");
@@ -51,6 +50,7 @@
     },
     "release-beta": () => {
       log("action: release-beta");
+      addCommentToPR("Hi! I'm bumper, and I'm here to help you with your lib bumps! 🚀");
       runBuild();        // ✅
       updateVersion();   // ✅
       syncPackageJSON(); // ✅
@@ -238,6 +238,18 @@
       .then(res => res.json());
 
     return {
+      async addCommentToPR(comment) {
+        const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/issues/${PR_NUMBER}/comments`;
+        const response = await fetch(BASE_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+          body: JSON.stringify({ body: comment }),
+        });
+        return response;
+      },
       async getPRChangelogDescription() {
         const changelogDescription = prInfo.body.split("## Changelog")[1];
         return `## Changelog\n${changelogDescription}`;
