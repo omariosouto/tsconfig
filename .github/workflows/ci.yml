@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     steps:
       # [Common CI/CD Setup]
