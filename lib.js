@@ -21,9 +21,13 @@
   const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
   // CI - GitHub Metadata
   const PR_NUMBER = 1; // TODO: 🚫 Get it from CI
-  const PR_COMMENT = ` 
+  const PR_COMMENT = `   
   bumper/release-beta
 `; // TODO: 🚫 Get it from CI
+  if(!isABumperComment()) {
+    log("🤖 - [isABumperComment] Not a bumper comment, nothing to bump for now 😔");
+    return;
+  }
 
   const gh = await GitHub();
   const BUMP_KIND = await gh.getBumpLabel();
@@ -215,6 +219,17 @@
   function normalizeVersion(version) {
     const versionParts = version.split(".");
     return `${versionParts[0]}.${versionParts[1]}.${versionParts[2].split("-")[0]}`;
+  }
+
+  function isABumperComment() {
+    const isBumperComment = PR_COMMENT
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line !== "")
+      .join("")
+      .startsWith("bumper/");
+
+    return isBumperComment;
   }
 
   async function GitHub() {
