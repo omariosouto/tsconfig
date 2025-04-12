@@ -1,7 +1,7 @@
 // =========================================================
 // Imports
 // =========================================================
-const DEBUG = false;
+
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
@@ -11,18 +11,28 @@ const YEAR = DATE.getFullYear();
 const MONTH = DATE.getMonth() + 1;
 const DAY = DATE.getDate();
 const MILLISECONDS = Math.floor(Date.now() / 1000);
-const PATH_TO_PACKAGE = path.join(__dirname, "packages", "lib");
 const ROOT_PATH = path.join(__dirname);
-const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.json"), "utf-8");
-const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
+const CONFIG_FILE_RAW = path.join(ROOT_PATH, ".bumper.json");
+const CONFIG_FILE = JSON.parse(fs.readFileSync(CONFIG_FILE_RAW, "utf-8"));
+// CI
 const PR_NUMBER = 1;
-const COMMAND_BUILD = "npm run build";
-const MESSAGE = `
+const PR_COMMENT = `
+  bumper/release-beta
+`;
+const BUMP_KIND = "patch"; // get from PR label
+const ACTION = "bumper/release-beta"; // get from PR comment
+const PR_DESCRIPTION = `
 ## Changelog
 Message to be added to the changelog
 `;
-const BUMP_KIND = "patch"; // major (x.0.0), minor (0.x.0), patch (0.0.X), beta (`0.0.0-beta20251231${PR_NUMBER}`)
-const ACTION = "release-beta"; // release-it, release-beta, skip-release
+// SOLVED
+const DEBUG = CONFIG_FILE.debug || false;
+const PATH_TO_PACKAGE = path.join(__dirname, CONFIG_FILE.packagePath);
+const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.json"), "utf-8");
+const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
+const COMMAND_BUILD = CONFIG_FILE.buildCommand || (() => { throw new Error("Build command not found") })();
+const MESSAGE = PR_DESCRIPTION || (() => { throw new Error("PR description not found") })();
+
 // =========================================================
 log(`[DEBUG:${DEBUG}]`);
 log(`[PackagePublisher] - Applying "${BUMP_KIND}" on "${PACKAGE_JSON.name}" from "${PACKAGE_JSON.version}"`);
@@ -143,7 +153,7 @@ function pushGitTag() {
 
 function createGitCommit() {
   log("🤖 - Create git commit");
-  
+
   const gitCommand = `git add . && git commit -m "Commiting ${PACKAGE_JSON.version} - ${YEAR}-${MONTH}-${DAY}"`;
 
   DEBUG &&

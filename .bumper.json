@@ -1,0 +1,5 @@
+{
+  "debug": true,
+  "packagePath": "packages/lib",
+  "buildCommand": "npm run build"
+}
