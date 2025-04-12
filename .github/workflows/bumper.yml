@@ -28,6 +28,9 @@ jobs:
 
       - name: Run library script
         run: | 
+          echo ${{ github.event.issue.pull_request.head.ref }}
+          echo "========"
+          git rev-parse --abbrev-ref HEAD
           # Set up Git configuration
           git config --global user.email "contato@mariosouto.com"
           git config --global user.name "Bumper"
