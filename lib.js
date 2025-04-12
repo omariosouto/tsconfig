@@ -47,6 +47,7 @@ const actions = {
     createGitTag();    // ✅
     pushGitTag();      // ✅
     resetBetaCommit(); // ✅
+    discardChanges();  // ✅
   },
   "skip-release": () => {
 
@@ -72,6 +73,13 @@ function resetBetaCommit() {
   log("🤖 - Resetting the beta commit");
   const gitCommand = `git reset HEAD~1`;
 
+  DEBUG && log(gitCommand);
+  !DEBUG && execSync(gitCommand, { stdio: "inherit" });
+}
+
+function discardChanges() {
+  log("🤖 - Discarding changes");
+  const gitCommand = `git checkout .`;
   DEBUG && log(gitCommand);
   !DEBUG && execSync(gitCommand, { stdio: "inherit" });
 }
