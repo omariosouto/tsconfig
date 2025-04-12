@@ -113,7 +113,7 @@ ${PACKAGE_JSON.version}
     log("🤖 - Merging the PR");
     const data = await gh.mergePR();
     console.log("mergePR", data);
-    if(!data.status.startsWith("2")) {
+    if(data?.status?.startsWith("4") || data?.status?.startsWith("5")) {
       throw new Error(data.message);
     }
   }
