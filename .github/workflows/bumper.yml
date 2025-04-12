@@ -19,14 +19,14 @@ jobs:
           script: |
             // Get the PR number from the issue payload
             const prNumber = context.payload.issue.number;
-
-            // Fetch PR details
-            const { data: pr } = await github.pulls.get({
+      
+            // Fetch PR details using github.rest
+            const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
             });
-
+      
             // Export the head branch name as an environment variable
             core.exportVariable('BRANCH_NAME', pr.head.ref);
 
