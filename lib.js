@@ -64,8 +64,8 @@
       await gh.updateCommentOnPR(commentID, (`
 Beta release created successfully!
       
-- Package: ${PACKAGE_JSON.name}
-- Version:
+- **Package**: \`${PACKAGE_JSON.name}\`
+- **Version**:
 \`\`\`sh
 ${PACKAGE_JSON.version}
 \`\`\`
