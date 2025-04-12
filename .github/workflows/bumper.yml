@@ -1,24 +1,26 @@
 name: Bumper
+
 on:
   issue_comment:
     types: [created]
 
 jobs:
   on-pr-comment:
-    # Only run if the comment is on a pull request
     if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out your repository so you can run your script
-      - name: Check out repository
+      - name: Check out PR branch
         uses: actions/checkout@v3
+        with:
+          # Use the fork’s repo/branch if needed:
+          repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
+          # This is the branch name of the PR:
+          ref: ${{ github.event.issue.pull_request.head.ref }}
 
-      # Step 2: Install dependencies (assuming your Node.js project uses package.json)
       - name: Install dependencies
         run: npm ci
 
-      # Step 3: Run your script
       - name: Run library script
         run: | 
           git config --global user.email "contato@mariosouto.com"
