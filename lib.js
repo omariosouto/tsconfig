@@ -1,24 +1,25 @@
 (async () => {
+  // =========================================================
+  // Imports
+  // =========================================================
+  const { execSync } = require("child_process");
+  const fs = require("fs");
+  const path = require("path");
+  const log = console.log;
+  const DATE = new Date();
+  const YEAR = DATE.getFullYear();
+  const MONTH = DATE.getMonth() + 1;
+  const DAY = DATE.getDate();
+  const MILLISECONDS = Math.floor(Date.now() / 1000);
+  const ROOT_PATH = path.join(__dirname);
+  const CONFIG_FILE_RAW = path.join(ROOT_PATH, ".bumper.json");
+  const CONFIG_FILE = JSON.parse(fs.readFileSync(CONFIG_FILE_RAW, "utf-8"));
+  const PATH_TO_PACKAGE = path.join(__dirname, CONFIG_FILE.packagePath);
+  const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.json"), "utf-8");
+  const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
+
   try {
-    // =========================================================
-    // Imports
-    // =========================================================
-    const { execSync } = require("child_process");
-    const fs = require("fs");
-    const path = require("path");
-    const log = console.log;
-    const DATE = new Date();
-    const YEAR = DATE.getFullYear();
-    const MONTH = DATE.getMonth() + 1;
-    const DAY = DATE.getDate();
-    const MILLISECONDS = Math.floor(Date.now() / 1000);
-    const ROOT_PATH = path.join(__dirname);
-    const CONFIG_FILE_RAW = path.join(ROOT_PATH, ".bumper.json");
-    const CONFIG_FILE = JSON.parse(fs.readFileSync(CONFIG_FILE_RAW, "utf-8"));
-    // BASE STUFF
-    const PATH_TO_PACKAGE = path.join(__dirname, CONFIG_FILE.packagePath);
-    const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.json"), "utf-8");
-    const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
+
     // CI - GitHub Metadata
     const PR_NUMBER = process.env.PR_NUMBER || CONFIG_FILE.mock.PR_NUMBER || (() => { throw new Error("PR_NUMBER not found") })();
     const PR_COMMENT = process.env.PR_COMMENT || CONFIG_FILE.mock.PR_COMMENT || (() => { throw new Error("PR_COMMENT not found") })();
