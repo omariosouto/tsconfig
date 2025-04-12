@@ -39,7 +39,7 @@
   log(`[PackagePublisher] - Applying "${BUMP_KIND}" on "${PACKAGE_JSON.name}" from "${PACKAGE_JSON.version}"`);
 
   const actions = {
-    "release-it": () => {
+    "release-it": async () => {
       log("action: release-it");
       runBuild();
       updateVersion();
@@ -48,9 +48,9 @@
       createGitTag();
       mergePR(); // 🚫
     },
-    "release-beta": () => {
+    "release-beta": async () => {
       log("action: release-beta");
-      addCommentToPR("Hi! I'm bumper, and I'm here to help you with your lib bumps! 🚀");
+      await addCommentToPR("Hi! I'm bumper, and I'm here to help you with your lib bumps! 🚀");
       runBuild();        // ✅
       updateVersion();   // ✅
       syncPackageJSON(); // ✅
@@ -62,12 +62,12 @@
       resetBetaCommit(); // ✅
       discardChanges();  // ✅
     },
-    "skip-release": () => {
+    "skip-release": async () => {
 
     },
   }
 
-  actions[ACTION]();
+  await actions[ACTION]();
 
   // =========================================================
   // Functions
