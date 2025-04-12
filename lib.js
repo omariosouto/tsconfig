@@ -20,11 +20,12 @@
   const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.json"), "utf-8");
   const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
   // CI - GitHub Metadata
-  const PR_NUMBER = 1; // get from CI
-  const PR_COMMENT = `
+  const PR_NUMBER = 1; // TODO: 🚫 Get it from CI
+  const PR_COMMENT = ` 
   bumper/release-beta
-`; // get from PR comment
-const gh = await GitHub();
+`; // TODO: 🚫 Get it from CI
+
+  const gh = await GitHub();
   const BUMP_KIND = await gh.getBumpLabel();
   const PR_DESCRIPTION = await gh.getPRChangelogDescription(); // get from PR description
   // SOLVED
@@ -45,7 +46,7 @@ const gh = await GitHub();
       syncPackageJSON();
       updateChangelog();
       createGitTag();
-      mergePR();
+      mergePR(); // 🚫
     },
     "release-beta": () => {
       log("action: release-beta");
@@ -56,7 +57,7 @@ const gh = await GitHub();
       createGitCommit(); // ✅
       createGitTag();    // ✅
       pushGitTag();      // ✅
-      publishVersion();  // 🚧
+      publishVersion();  // ✅
       resetBetaCommit(); // ✅
       discardChanges();  // ✅
     },
@@ -252,7 +253,7 @@ const gh = await GitHub();
           throw new Error("Multiple valid labels found, please choose one");
         }
 
-        const prBumpLabel = labels.find(label => validBumpLabels.includes(label)); 
+        const prBumpLabel = labels.find(label => validBumpLabels.includes(label));
 
         return prBumpLabel;
       },
