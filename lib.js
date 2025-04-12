@@ -64,7 +64,7 @@
       await gh.updateCommentOnPR(commentID, (`
 Beta release created successfully!
       
-- **Package**: \`${PACKAGE_JSON.name}\`
+- **Package**: [\`${PACKAGE_JSON.name}\`](https://github.com/omariosouto/tsconfig/releases/tag/v${PACKAGE_JSON.version})
 - **Version**:
 \`\`\`sh
 ${PACKAGE_JSON.version}
