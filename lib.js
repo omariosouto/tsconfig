@@ -5,7 +5,7 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const log = console.log;
-const DEBUG = false;
+const DEBUG = true;
 const DATE = new Date();
 const YEAR = DATE.getFullYear();
 const MONTH = DATE.getMonth() + 1;
@@ -17,6 +17,7 @@ const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.js
 const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
 const PR_NUMBER = 1;
 const COMMAND_BUILD = "npm run build";
+const COMMAND_PUBLISH = "npm run publish:version";
 const MESSAGE = `
 ## Changelog
 Message to be added to the changelog
@@ -46,6 +47,7 @@ const actions = {
     createGitCommit(); // ✅
     createGitTag();    // ✅
     pushGitTag();      // ✅
+    publishVersion();  // 🚧
     resetBetaCommit(); // ✅
     discardChanges();  // ✅
   },
@@ -63,6 +65,14 @@ function runBuild() {
   log("🤖 - [runBuild] Running build command");
   DEBUG && log(COMMAND_BUILD);
   !DEBUG && execSync(COMMAND_BUILD, { stdio: "inherit" });
+}
+
+function publishVersion() {
+  log("🤖 - [publishVersion] Publishing version");
+  const command = `${COMMAND_PUBLISH}`;
+
+  DEBUG && log(command);
+  !DEBUG && execSync(command, { stdio: "inherit" });
 }
 
 function mergePR() {
