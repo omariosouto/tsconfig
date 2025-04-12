@@ -23,8 +23,14 @@ jobs:
 
       - name: Run library script
         run: | 
+          # Set up Git configuration
           git config --global user.email "contato@mariosouto.com"
           git config --global user.name "Bumper"
+
+          # Setup .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+
+          # Run the bumper script
           npm run bumper
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
