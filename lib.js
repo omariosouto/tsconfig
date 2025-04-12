@@ -50,7 +50,7 @@
     },
     "release-beta": async () => {
       log("action: release-beta");
-      await gh.addCommentToPR("Hi! I'm bumper, and I'm here to help you with your lib bumps! 🚀");
+      const commentID = await gh.addCommentToPR("Creating a beta release...");
       runBuild();        // ✅
       updateVersion();   // ✅
       syncPackageJSON(); // ✅
@@ -61,6 +61,7 @@
       publishVersion();  // ✅
       resetBetaCommit(); // ✅
       discardChanges();  // ✅
+      await gh.updateCommentOnPR(commentID, "Beta release created successfully!");
     },
     "skip-release": async () => {
 
@@ -251,8 +252,22 @@
       
         const data = await response.json();
         console.log("%%%%% -", data);
-        return data;
-      },      
+        return data.id;
+      },    
+      async updateCommentOnPR(commentId, newComment) {
+        const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/issues/comments/${commentId}`;
+        const response = await fetch(BASE_URL, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+          body: JSON.stringify({ body: newComment }),
+        });
+      
+        const data = await response.json();
+        return data.id;
+      },  
       async getPRChangelogDescription() {
         const changelogDescription = prInfo.body.split("## Changelog")[1];
         return `## Changelog\n${changelogDescription}`;
