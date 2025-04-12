@@ -1,11 +1,11 @@
 // =========================================================
 // Imports
 // =========================================================
+const DEBUG = false;
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const log = console.log;
-const DEBUG = true;
 const DATE = new Date();
 const YEAR = DATE.getFullYear();
 const MONTH = DATE.getMonth() + 1;
