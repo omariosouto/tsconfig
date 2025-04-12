@@ -71,8 +71,8 @@ function publishVersion() {
   const isBetaVersion = PACKAGE_JSON.version.includes("beta");
 
   const command = isBetaVersion
-    ? `npm publish --tag beta --access public --prefix ${PATH_TO_PACKAGE}`
-    : `npm publish --access public --prefix ${PATH_TO_PACKAGE}`;
+    ? `npm publish --tag beta --access public -C ${PATH_TO_PACKAGE}`
+    : `npm publish --access public -C ${PATH_TO_PACKAGE}`;
 
   DEBUG && log(command);
   !DEBUG && execSync(command, { stdio: "inherit" });
