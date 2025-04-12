@@ -14,19 +14,19 @@ const MILLISECONDS = Math.floor(Date.now() / 1000);
 const ROOT_PATH = path.join(__dirname);
 const CONFIG_FILE_RAW = path.join(ROOT_PATH, ".bumper.json");
 const CONFIG_FILE = JSON.parse(fs.readFileSync(CONFIG_FILE_RAW, "utf-8"));
-// CI
-const PR_NUMBER = 1;
+// CI - GitHub Metadata
+const PR_NUMBER = 1; // get from CI
 const PR_COMMENT = `
   bumper/release-beta
-`;
+`; // get from PR comment
 const BUMP_KIND = "patch"; // get from PR label
-const ACTION = "bumper/release-beta"; // get from PR comment
 const PR_DESCRIPTION = `
 ## Changelog
 Message to be added to the changelog
-`;
+`; // get from PR description
 // SOLVED
 const DEBUG = CONFIG_FILE.debug || false;
+const ACTION = PR_COMMENT.match(/bumper\/(release-beta|skip-release|relase-it)/)?.[1] || (() => { throw new Error("Action not found") })();
 const PATH_TO_PACKAGE = path.join(__dirname, CONFIG_FILE.packagePath);
 const PACKAGE_JSON_FILE = fs.readFileSync(path.join(PATH_TO_PACKAGE, "package.json"), "utf-8");
 const PACKAGE_JSON = JSON.parse(PACKAGE_JSON_FILE);
