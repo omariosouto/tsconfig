@@ -123,33 +123,36 @@ function createGitCommit() {
 
 function updateVersion() {
   log("🤖 - [updateVersion] Updating the version");
-  const version = PACKAGE_JSON.version.split(".");
-  const major = version[0];
-  const minor = version[1];
-  const patch = version[2];
+  const isVersionAlreadyBeta = PACKAGE_JSON.version.includes("beta");
+  let newVersion;
+  const CURRENT_VERSION = normalizeVersion(PACKAGE_JSON.version).split(".");
 
-  if (ACTION === "release-beta") {
-    PACKAGE_JSON.version = `${major}.${minor}.${patch}-beta${YEAR}${MONTH}${DAY}${MILLISECONDS}PR${PR_NUMBER}`;
-    log(`Beta version bumped to ${PACKAGE_JSON.version}`);
-    return;
-  }
+  const major = isVersionAlreadyBeta && BUMP_KIND === "major" ? CURRENT_VERSION[0] - 1 : CURRENT_VERSION[0];
+  const minor = isVersionAlreadyBeta && BUMP_KIND === "minor" ? CURRENT_VERSION[1] - 1 : CURRENT_VERSION[1];
+  const patch = isVersionAlreadyBeta && BUMP_KIND === "patch" ? CURRENT_VERSION[2] - 1 : CURRENT_VERSION[2];
+
+  log(`Version: ${PACKAGE_JSON.version} -> ${major}.${minor}.${patch} [base version]`);
 
   switch (BUMP_KIND) {
     case "major":
-      PACKAGE_JSON.version = `${parseInt(major) + 1}.0.0`;
-      log(`Major version bumped to ${PACKAGE_JSON.version}`);
+      newVersion = `${parseInt(major) + 1}.${minor}.${patch}`;
       break;
     case "minor":
-      PACKAGE_JSON.version = `${major}.${parseInt(minor) + 1}.0`;
-      log(`Minor version bumped to ${PACKAGE_JSON.version}`);
+      newVersion = `${major}.${parseInt(minor) + 1}.${patch}`;
       break;
     case "patch":
-      PACKAGE_JSON.version = `${major}.${minor}.${parseInt(patch) + 1}`;
-      log(`Patch version bumped to ${PACKAGE_JSON.version}`);
+      newVersion = `${major}.${minor}.${parseInt(patch) + 1}`;
       break;
     default:
       throw new Error("Invalid bump kind");
   }
+
+  if (ACTION === "release-beta") {
+    newVersion = `${newVersion}-beta${YEAR}${MONTH}${DAY}${MILLISECONDS}PR${PR_NUMBER}`;
+  }
+
+  log(`Applying ${newVersion} from ${PACKAGE_JSON.version} through a ${BUMP_KIND}`)
+  PACKAGE_JSON.version = newVersion;
 }
 
 function syncPackageJSON() {
@@ -166,5 +169,9 @@ function parseMessage() {
     .filter(Boolean)
     .join("\n");
   return parsedMessage;
+}
+function normalizeVersion(version) {
+  const versionParts = version.split(".");
+  return `${versionParts[0]}.${versionParts[1]}.${versionParts[2].split("-")[0]}`;
 }
 // =========================================================
