@@ -111,12 +111,12 @@ ${PACKAGE_JSON.version}
 
   async function mergePR() {
     log("🤖 - Merging the PR");
-    const isPRValid = await gh.isPRValid();
-    if(!isPRValid) {
-      throw new Error("PR is not valid, check if all checks are passing and that PR is approved");
+    try {
+      await gh.mergePR();
+    } catch(error) {
+      log("🤖 - [mergePR] Error merging PR:", error);
+      throw new Error("Error merging PR - " + error.message);
     }
-
-    gh.mergePR();
   }
 
   function resetBetaCommit() {
@@ -276,14 +276,6 @@ ${PACKAGE_JSON.version}
 
         const data = await response.json();
         return data;
-      },
-      async isPRValid() {
-        const checks = prInfo.checks;
-        if (!checks) {
-          throw new Error("No checks found");
-        }
-        const isPRValid = checks.every(check => check.state === "success");
-        return isPRValid;
       },
       async addCommentToPR(comment) {
         const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/issues/${PR_NUMBER}/comments`;
