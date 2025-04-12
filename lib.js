@@ -317,7 +317,7 @@ ${PACKAGE_JSON.version}
 
         // Check if PR has labels
         if (prInfo.labels.length === 0) {
-          await this.addCommentToPR("No labels found, please add one of major|minor|patch labels");
+          await this.addCommentToPR("No labels found, please add one of `major`,`minor` or `patch` labels");
           throw new Error("No labels found");
         }
         // Check if PR has valid labels
