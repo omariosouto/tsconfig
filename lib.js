@@ -68,23 +68,24 @@
         createGitTag();    // ✅
         pushGitTag();      // ✅
         publishVersion();  // ✅
-        await mergePR()
-          .then(async () => {
-            await gh.updateCommentOnPR(commentID, (`
-              Release created successfully!
+        // TODO: Create the integration through a GitHub App to make this possible
+        // await mergePR()
+        //   .then(async () => {
+        //     await gh.updateCommentOnPR(commentID, (`
+        //       Release created successfully!
                             
-              - **Package**: [\`${PACKAGE_JSON.name}\`](https://github.com/omariosouto/tsconfig/releases/tag/v${PACKAGE_JSON.version})
-              - **Version**:
-              \`\`\`sh
-              ${PACKAGE_JSON.version}
-              \`\`\`
-                      `
-            ));
-          })
-          .catch(async (error) => {
-            log("🤖 - [release-it] Error merging PR:", error);
-            await gh.updateCommentOnPR(commentID, `Error creating release: ${error.message}`);
-          });
+        //       - **Package**: [\`${PACKAGE_JSON.name}\`](https://github.com/omariosouto/tsconfig/releases/tag/v${PACKAGE_JSON.version})
+        //       - **Version**:
+        //       \`\`\`sh
+        //       ${PACKAGE_JSON.version}
+        //       \`\`\`
+        //               `
+        //     ));
+        //   })
+        //   .catch(async (error) => {
+        //     log("🤖 - [release-it] Error merging PR:", error);
+        //     await gh.updateCommentOnPR(commentID, `Error creating release: ${error.message}`);
+        //   });
       },
       "release-beta": async () => {
         log("action: release-beta");
