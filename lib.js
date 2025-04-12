@@ -79,7 +79,7 @@ function resetBetaCommit() {
 
 function discardChanges() {
   log("🤖 - Discarding changes");
-  const gitCommand = `git clean -fd`;
+  const gitCommand = `git checkout . && git clean -fd`;
   DEBUG && log(gitCommand);
   !DEBUG && execSync(gitCommand, { stdio: "inherit" });
 }
