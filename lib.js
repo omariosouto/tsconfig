@@ -41,7 +41,7 @@
     const actions = {
       "release-it": async () => {
         log("action: release-it");
-        const commentID = await gh.addCommentToPR(`Creating a beta release...`);
+        const commentID = await gh.addCommentToPR(`Creating a release...`);
         runBuild();        // ✅
         updateVersion();   // ✅
         syncPackageJSON(); // ✅
