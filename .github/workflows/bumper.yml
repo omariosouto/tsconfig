@@ -20,7 +20,7 @@ jobs:
 
       # Step 3: Run your script
       - name: Run library script
-        run: node ./lib.js
+        run: npm run bumper
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
