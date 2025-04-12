@@ -10,6 +10,7 @@
   "scripts": {
     "release-bot": "node ./lib",
     "dev:release-bot": "npx nodemon ./lib",
+    "build": "echo 'I need to build the library...'",
     "example": "npm exec --workspace=example-nextjs",
     "dev:example": "npm run example -- npm run dev",
     "lib": "npm exec --workspace=@omariosouto/tsconfig",
