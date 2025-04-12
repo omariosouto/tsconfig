@@ -39,6 +39,18 @@
     log(`[PackagePublisher] - Applying "${BUMP_KIND}" on "${PACKAGE_JSON.name}" from "${PACKAGE_JSON.version}"`);
 
     const actions = {
+      "skip-release": async () => {
+        log("action: skip-release");
+        const commentID = await gh.addCommentToPR(`Skipping release...`);
+        await mergePR()
+          .then(async () => {
+            await gh.updateCommentOnPR(commentID, `Release skipped successfully!`);
+          })
+          .catch(async (error) => {
+            log("🤖 - [skip-release] Error merging PR:", error);
+            await gh.updateCommentOnPR(commentID, `Error skipping release: ${error.message}`);
+          });
+      },
       "release-it": async () => {
         log("action: release-it");
         const isPRMergeable = await gh.isPRMergeable();
@@ -46,6 +58,7 @@
         // TODO: Check if we are able to merge the PR
         !isPRMergeable && await gh.updateCommentOnPR(commentID, `PR is not mergeable, please ensure that it's validated and try again.`);
         if (!isPRMergeable) return;
+
         runBuild();        // ✅
         updateVersion();   // ✅
         syncPackageJSON(); // ✅
@@ -96,18 +109,6 @@ ${PACKAGE_JSON.version}
 \`\`\`
 `
         ));
-      },
-      "skip-release": async () => {
-        log("action: skip-release");
-        const commentID = await gh.addCommentToPR(`Skipping release...`);
-        await mergePR()
-          .then(async () => {
-            await gh.updateCommentOnPR(commentID, `Release skipped successfully!`);
-          })
-          .catch(async (error) => {
-            log("🤖 - [skip-release] Error merging PR:", error);
-            await gh.updateCommentOnPR(commentID, `Error skipping release: ${error.message}`);
-          });
       },
     }
 
