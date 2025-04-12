@@ -8,10 +8,12 @@
     "packages/*"
   ],
   "scripts": {
+    "bumper": "node ./lib",
+    "dev:bumper": "npx nodemon ./lib",
     "example": "npm exec --workspace=example-nextjs",
     "dev:example": "npm run example -- npm run dev",
     "lib": "npm exec --workspace=@omariosouto/tsconfig",
-    "publish-release": "npm run lib -- npm publish"
+    "build": "echo 'I need to build the library...'"
   },
   "keywords": [],
   "author": "",

@@ -3,7 +3,7 @@
   "version": "1.0.4",
   "main": "index.json",
   "license": "MIT",
-  "repository":"https://github.com/omariosouto/tsconfig",
+  "repository": "https://github.com/omariosouto/tsconfig",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
