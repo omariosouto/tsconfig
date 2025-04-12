@@ -22,7 +22,7 @@
   const PR_NUMBER = process.env.PR_NUMBER || CONFIG_FILE.mock.PR_NUMBER || (() => { throw new Error("PR_NUMBER not found") })();
   const PR_COMMENT = process.env.PR_COMMENT || CONFIG_FILE.mock.PR_COMMENT || (() => { throw new Error("PR_COMMENT not found") })();
 
-  if(!isABumperComment())
+  if (!isABumperComment())
     return log("🤖 - [isABumperComment] Not a bumper comment, nothing to bump for now 😔");
 
   const gh = await GitHub();
@@ -39,18 +39,18 @@
   log(`[PackagePublisher] - Applying "${BUMP_KIND}" on "${PACKAGE_JSON.name}" from "${PACKAGE_JSON.version}"`);
 
   const actions = {
-    "release-it": () => {
+    "release-it": async () => {
       log("action: release-it");
       runBuild();
       updateVersion();
       syncPackageJSON();
       updateChangelog();
       createGitTag();
-      mergePR(); // 🚫
+      await mergePR(); // 🚫
     },
-    "release-beta": () => {
+    "release-beta": async () => {
       log("action: release-beta");
-      addCommentToPR("Hi! I'm bumper, and I'm here to help you with your lib bumps! 🚀");
+      const commentID = await gh.addCommentToPR(`Creating a beta release...`);
       runBuild();        // ✅
       updateVersion();   // ✅
       syncPackageJSON(); // ✅
@@ -61,13 +61,32 @@
       publishVersion();  // ✅
       resetBetaCommit(); // ✅
       discardChanges();  // ✅
+      await gh.updateCommentOnPR(commentID, (`
+Beta release created successfully!
+      
+- **Package**: [\`${PACKAGE_JSON.name}\`](https://github.com/omariosouto/tsconfig/releases/tag/v${PACKAGE_JSON.version})
+- **Version**:
+\`\`\`sh
+${PACKAGE_JSON.version}
+\`\`\`
+`
+      ));
     },
-    "skip-release": () => {
-
+    "skip-release": async () => {
+      log("action: skip-release");
+      const commentID = await gh.addCommentToPR(`Skipping release...`);
+      await mergePR()
+        .then(async () => {
+          await gh.updateCommentOnPR(commentID, `Release skipped successfully!`);
+        })
+        .catch(async (error) => {
+          log("🤖 - [skip-release] Error merging PR:", error);
+          await gh.updateCommentOnPR(commentID, `Error skipping release: ${error.message}`);
+        });
     },
   }
 
-  actions[ACTION]();
+  await actions[ACTION]();
 
   // =========================================================
   // Functions
@@ -90,8 +109,14 @@
     !DEBUG && execSync(command, { stdio: "inherit" });
   }
 
-  function mergePR() {
+  async function mergePR() {
     log("🤖 - Merging the PR");
+    try {
+      await gh.mergePR();
+    } catch(error) {
+      log("🤖 - [mergePR] Error merging PR:", error);
+      throw new Error("Error merging PR - " + error.message);
+    }
   }
 
   function resetBetaCommit() {
@@ -238,6 +263,20 @@
       .then(res => res.json());
 
     return {
+      async mergePR() {
+        const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/pulls/${PR_NUMBER}/merge`;
+        const response = await fetch(BASE_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+          body: JSON.stringify({ commit_title: `Merge PR #${PR_NUMBER}` }),
+        });
+
+        const data = await response.json();
+        return data;
+      },
       async addCommentToPR(comment) {
         const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/issues/${PR_NUMBER}/comments`;
         const response = await fetch(BASE_URL, {
@@ -248,7 +287,24 @@
           },
           body: JSON.stringify({ body: comment }),
         });
-        return response;
+
+        const data = await response.json();
+        console.log("%%%%% -", data);
+        return data.id;
+      },
+      async updateCommentOnPR(commentId, newComment) {
+        const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/issues/comments/${commentId}`;
+        const response = await fetch(BASE_URL, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+          body: JSON.stringify({ body: newComment }),
+        });
+
+        const data = await response.json();
+        return data.id;
       },
       async getPRChangelogDescription() {
         const changelogDescription = prInfo.body.split("## Changelog")[1];
