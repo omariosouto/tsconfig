@@ -5,7 +5,9 @@ on:
     types: [created]
 
 permissions:
-  contents: write   # Ensure we can read/checkout the fork code
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   on-pr-comment:
