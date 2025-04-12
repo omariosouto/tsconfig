@@ -304,7 +304,7 @@ ${PACKAGE_JSON.version}
         });
 
         const data = await response.json();
-        return data.mergeable;
+        return data.mergeable && data.mergeable_state === "clean";
       },
       async mergePR() {
         const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/pulls/${PR_NUMBER}/merge`;
