@@ -247,11 +247,12 @@
             Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
           },
           body: JSON.stringify({ body: comment }),
-        })
-        .then(res => res.json());
-        console.log(`%%%%% - `, response);
-        return response;
-      },
+        });
+      
+        const data = await response.json();
+        console.log("%%%%% -", data);
+        return data;
+      },      
       async getPRChangelogDescription() {
         const changelogDescription = prInfo.body.split("## Changelog")[1];
         return `## Changelog\n${changelogDescription}`;
