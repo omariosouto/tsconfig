@@ -22,7 +22,7 @@
   const PR_NUMBER = process.env.PR_NUMBER || CONFIG_FILE.mock.PR_NUMBER || (() => { throw new Error("PR_NUMBER not found") })();
   const PR_COMMENT = process.env.PR_COMMENT || CONFIG_FILE.mock.PR_COMMENT || (() => { throw new Error("PR_COMMENT not found") })();
 
-  if(!isABumperComment())
+  if (!isABumperComment())
     return log("🤖 - [isABumperComment] Not a bumper comment, nothing to bump for now 😔");
 
   const gh = await GitHub();
@@ -50,7 +50,7 @@
     },
     "release-beta": async () => {
       log("action: release-beta");
-      const commentID = await gh.addCommentToPR("Creating a beta release...");
+      const commentID = await gh.addCommentToPR(`Creating a beta release...`);
       runBuild();        // ✅
       updateVersion();   // ✅
       syncPackageJSON(); // ✅
@@ -61,7 +61,16 @@
       publishVersion();  // ✅
       resetBetaCommit(); // ✅
       discardChanges();  // ✅
-      await gh.updateCommentOnPR(commentID, "Beta release created successfully!");
+      await gh.updateCommentOnPR(commentID, (`
+Beta release created successfully!
+      
+- Package: ${PACKAGE_JSON.name}
+- Version:
+\`\`\`sh
+${PACKAGE_JSON.version}
+\`\`\`
+`
+      ));
     },
     "skip-release": async () => {
 
@@ -249,11 +258,11 @@
           },
           body: JSON.stringify({ body: comment }),
         });
-      
+
         const data = await response.json();
         console.log("%%%%% -", data);
         return data.id;
-      },    
+      },
       async updateCommentOnPR(commentId, newComment) {
         const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/issues/comments/${commentId}`;
         const response = await fetch(BASE_URL, {
@@ -264,10 +273,10 @@
           },
           body: JSON.stringify({ body: newComment }),
         });
-      
+
         const data = await response.json();
         return data.id;
-      },  
+      },
       async getPRChangelogDescription() {
         const changelogDescription = prInfo.body.split("## Changelog")[1];
         return `## Changelog\n${changelogDescription}`;
