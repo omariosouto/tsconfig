@@ -43,7 +43,9 @@ const actions = {
     updateVersion();   // ✅
     syncPackageJSON(); // ✅
     updateChangelog(); // ✅
-    createGitTag();
+    createGitCommit(); // ✅
+    createGitTag();    // ✅
+    pushGitTag();      // 🚧
   },
   "skip-release": () => {
 
@@ -67,12 +69,9 @@ function mergePR() {
 
 function updateChangelog() {
   log("🤖 - [updateChangelog] Updating the changelog");
-  // 2 FILES must be saved:
-  // - one on the root of the project
-  // - one on the root of the package
   const CHANGELOG_FILE_PATH = path.join(PATH_TO_PACKAGE, "CHANGELOG.md");
   const CHANGELOG_ROOT_FILE_PATH = path.join(ROOT_PATH, "CHANGELOG.md");
-  const hasChangelogFile = fs.existsSync(CHANGELOG_FILE_PATH); 
+  const hasChangelogFile = fs.existsSync(CHANGELOG_FILE_PATH);
   const CHANGELOG_FILE = hasChangelogFile ? fs.readFileSync(CHANGELOG_FILE_PATH, "utf-8") : "";
   const parsedMessage = parseMessage(MESSAGE);
 
@@ -82,16 +81,44 @@ function updateChangelog() {
 
   const UPDATED_CHANGELOG_FILE = CHANGELOG_FILE_LINES.join("\n");
   DEBUG && log(UPDATED_CHANGELOG_FILE);
-  DEBUG && log(`Saved on ${CHANGELOG_FILE_PATH}!`);
-  DEBUG && log(`Saved on ${CHANGELOG_ROOT_FILE_PATH}!`);
-  !DEBUG && fs.writeFileSync(CHANGELOG_FILE_PATH, UPDATED_CHANGELOG_FILE);
-  !DEBUG && fs.writeFileSync(CHANGELOG_ROOT_FILE_PATH, UPDATED_CHANGELOG_FILE);
+  DEBUG &&
+    log(`Saved on ${CHANGELOG_FILE_PATH}!`);
+  !DEBUG &&
+    fs.writeFileSync(CHANGELOG_FILE_PATH, UPDATED_CHANGELOG_FILE);
+  DEBUG &&
+    log(`Saved on ${CHANGELOG_ROOT_FILE_PATH}!`);
+  !DEBUG &&
+    fs.writeFileSync(CHANGELOG_ROOT_FILE_PATH, UPDATED_CHANGELOG_FILE);
 }
 function createGitTag() {
   log("🤖 - Create git TAG");
   const parsedMessage = parseMessage(MESSAGE);
-  log(`git tag -a v${PACKAGE_JSON.version} -m "${parsedMessage}"`);
+  const gitCommand = `git tag -a v${PACKAGE_JSON.version} -m "${parsedMessage}"`;
+
+  DEBUG &&
+    log(gitCommand);
+  !DEBUG &&
+    execSync(gitCommand, { stdio: "inherit" });
+}
+
+function pushGitTag() {
   log("🤖 - Push git TAG");
+  const gitCommand = `git push origin v${PACKAGE_JSON.version}`;
+
+  DEBUG &&
+    log(gitCommand);
+  !DEBUG &&
+    execSync(gitCommand, { stdio: "inherit" });
+}
+
+function createGitCommit() {
+  log("🤖 - Create git commit");
+  const gitCommand = `git commit -m "Commiting ${PACKAGE_JSON.version} - ${YEAR}-${MONTH}-${DAY}"`;
+
+  DEBUG &&
+    log(gitCommand);
+  !DEBUG &&
+    execSync(gitCommand, { stdio: "inherit" });
 }
 
 function updateVersion() {
@@ -127,12 +154,11 @@ function updateVersion() {
 
 function syncPackageJSON() {
   log("🤖 - [syncPackageJSON] Syncing package.json...");
-  !DEBUG && fs.writeFileSync(path.join(PATH_TO_PACKAGE, "package.json"), JSON.stringify(PACKAGE_JSON, null, 2));
+  !DEBUG &&
+    fs.writeFileSync(path.join(PATH_TO_PACKAGE, "package.json"), JSON.stringify(PACKAGE_JSON, null, 2));
 }
 
 function parseMessage() {
-  log("🤖 - [parseMessage] Parsing the message");
-
   const lines = MESSAGE.split("\n");
   const filteredLines = lines.filter(line => line.trim() !== "");
   const parsedMessage = filteredLines
