@@ -13,24 +13,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Retrieve PR branch via GitHub Script
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Get the PR number from the issue payload
+            const prNumber = context.payload.issue.number;
+      
+            // Fetch PR details using github.rest
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+      
+            // Export the head branch name as an environment variable
+            core.exportVariable('BRANCH_NAME', pr.head.ref);
+
       - name: Check out PR branch
         uses: actions/checkout@v3
         with:
-          # Use the fork’s repo/branch if needed
-          repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
-          # This is the branch name of the PR
-          ref: ${{ github.event.issue.pull_request.head.ref }}
-          # Fetch full history to ensure we are actually on the PR branch
-          fetch-depth: 0
+          ref: ${{ env.BRANCH_NAME }}
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run library script
         run: | 
-          echo ${{ github.event.issue.pull_request.head.ref }}
-          echo "========"
           git rev-parse --abbrev-ref HEAD
+          echo "========"
           # Set up Git configuration
           git config --global user.email "contato@mariosouto.com"
           git config --global user.name "Bumper"
