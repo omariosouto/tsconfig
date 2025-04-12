@@ -14,7 +14,7 @@
     "dev:example": "npm run example -- npm run dev",
     "lib": "npm exec --workspace=@omariosouto/tsconfig",
     "build": "echo 'I need to build the library...'",
-    "test": "echo 'All tests passed!'"
+    "test": "echo 'All tests passed!' && sleep 60"
   },
   "keywords": [],
   "author": "",
