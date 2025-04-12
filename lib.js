@@ -46,7 +46,7 @@
       syncPackageJSON();
       updateChangelog();
       createGitTag();
-      mergePR(); // 🚫
+      await mergePR(); // 🚫
     },
     "release-beta": async () => {
       log("action: release-beta");
@@ -73,7 +73,16 @@ ${PACKAGE_JSON.version}
       ));
     },
     "skip-release": async () => {
-
+      log("action: skip-release");
+      const commentID = await gh.addCommentToPR(`Skipping release...`);
+      await mergePR()
+        .then(async () => {
+          await gh.updateCommentOnPR(commentID, `Release skipped successfully!`);
+        })
+        .catch(async (error) => {
+          log("🤖 - [skip-release] Error merging PR:", error);
+          await gh.updateCommentOnPR(commentID, `Error skipping release: ${error.message}`);
+        });
     },
   }
 
@@ -100,8 +109,14 @@ ${PACKAGE_JSON.version}
     !DEBUG && execSync(command, { stdio: "inherit" });
   }
 
-  function mergePR() {
+  async function mergePR() {
     log("🤖 - Merging the PR");
+    const isPRValid = await gh.isPRValid();
+    if(!isPRValid) {
+      throw new Error("PR is not valid, check if all checks are passing and that PR is approved");
+    }
+
+    gh.mergePR();
   }
 
   function resetBetaCommit() {
@@ -248,6 +263,28 @@ ${PACKAGE_JSON.version}
       .then(res => res.json());
 
     return {
+      async mergePR() {
+        const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/pulls/${PR_NUMBER}/merge`;
+        const response = await fetch(BASE_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          },
+          body: JSON.stringify({ commit_title: `Merge PR #${PR_NUMBER}` }),
+        });
+
+        const data = await response.json();
+        return data;
+      },
+      async isPRValid() {
+        const checks = prInfo.checks;
+        if (!checks) {
+          throw new Error("No checks found");
+        }
+        const isPRValid = checks.every(check => check.state === "success");
+        return isPRValid;
+      },
       async addCommentToPR(comment) {
         const BASE_URL = `https://api.github.com/repos/${owner}/${repo}/issues/${PR_NUMBER}/comments`;
         const response = await fetch(BASE_URL, {
