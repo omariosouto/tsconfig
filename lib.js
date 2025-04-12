@@ -115,7 +115,7 @@ ${PACKAGE_JSON.version}
 
     function pushToPR() {
       log("🤖 - [pushToPR] Pushing to PR");
-      const gitCommand = `git push origin HEAD:${process.env.GITHUB_REF}`;
+      const gitCommand = `git push origin HEAD`;
 
       DEBUG && log(gitCommand);
       !DEBUG && execSync(gitCommand, { stdio: "inherit" });
