@@ -41,9 +41,10 @@
     const actions = {
       "release-it": async () => {
         log("action: release-it");
+        const isPRMergeable = await gh.isPRMergeable();
         const commentID = await gh.addCommentToPR(`Creating a release...`);
         // TODO: Check if we are able to merge the PR
-        !gh.isPRMergeable() && gh.updateCommentOnPR(commentID, `PR is not mergeable, please ensure that it's validated and try again.`);
+        !isPRMergeable && await gh.updateCommentOnPR(commentID, `PR is not mergeable, please ensure that it's validated and try again.`);
         runBuild();        // ✅
         updateVersion();   // ✅
         syncPackageJSON(); // ✅
