@@ -24,10 +24,9 @@
   const PR_COMMENT = `   
   bumper/release-beta
 `; // TODO: 🚫 Get it from CI
-  if(!isABumperComment()) {
-    log("🤖 - [isABumperComment] Not a bumper comment, nothing to bump for now 😔");
-    return;
-  }
+
+  if(!isABumperComment())
+    return log("🤖 - [isABumperComment] Not a bumper comment, nothing to bump for now 😔");
 
   const gh = await GitHub();
   const BUMP_KIND = await gh.getBumpLabel();
