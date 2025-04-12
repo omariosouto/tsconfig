@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "dev:release-bot": "npx nodemon ./lib",
     "example": "npm exec --workspace=example-nextjs",
     "dev:example": "npm run example -- npm run dev",
     "lib": "npm exec --workspace=@omariosouto/tsconfig",
