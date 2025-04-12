@@ -11,50 +11,68 @@ permissions:
 
 jobs:
   on-pr-comment:
-    if: ${{ github.event.issue.pull_request }}  # Only run if the comment is on a PR
+    if: ${{ github.event.issue.pull_request }} # Only run if the comment is on a PR
     runs-on: ubuntu-latest
 
     steps:
+      - name: Create GitHub App token
+        id: create-app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          # Optionally specify which repository permissions you need.
+          # See https://github.com/actions/create-github-app-token#inputs
+          # e.g., permissions: 'contents:write, pull-requests:write, issues:write'
+
+      - name: Set up Git config for bot user
+        run: |
+          git config --global user.name "Bumper - Qualistack"
+          git config --global user.email "contato@mariosouto.com"
+
       - name: Retrieve PR branch via GitHub Script
         uses: actions/github-script@v6
         with:
           script: |
             // Get the PR number from the issue payload
             const prNumber = context.payload.issue.number;
-      
+
             // Fetch PR details using github.rest
             const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
             });
-      
+
             // Export the head branch name as an environment variable
             core.exportVariable('BRANCH_NAME', pr.head.ref);
+        env:
+          # Use the newly created GitHub App token instead of the default GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ steps.create-app-token.outputs.token }}
 
       - name: Check out PR branch
         uses: actions/checkout@v3
         with:
           ref: ${{ env.BRANCH_NAME }}
+          # Provide the App token so that any further operations (like pushing commits) are attributed to the bot
+          token: ${{ steps.create-app-token.outputs.token }}
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run library script
-        run: | 
-          git rev-parse --abbrev-ref HEAD
+        run: |
+          echo "Branch name: $(git rev-parse --abbrev-ref HEAD)"
           echo "========"
-          # Set up Git configuration
-          git config --global user.email "contato@mariosouto.com"
-          git config --global user.name "Bumper"
 
-          # Setup .npmrc
+          # Optionally set up a custom .npmrc if needed for private npm usage
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_REGISTRY_TOKEN }}" > ~/.npmrc
 
           # Run the bumper script
           npm run bumper
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use the App token for any Git/GitHub operations
+          GITHUB_TOKEN: ${{ steps.create-app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.issue.number }}
           PR_COMMENT: ${{ github.event.comment.body }}
           GH_REGISTRY_TOKEN: ${{ secrets.GH_REGISTRY_TOKEN }}
