@@ -113,7 +113,7 @@ ${PACKAGE_JSON.version}
     log("🤖 - Merging the PR");
     const data = await gh.mergePR();
     console.log("mergePR", data);
-    if(!data.status.startsWith("2")) {
+    if(data?.status?.startsWith("4") || data?.status?.startsWith("5")) {
       throw new Error(data.message);
     }
   }
@@ -317,6 +317,7 @@ ${PACKAGE_JSON.version}
 
         // Check if PR has labels
         if (prInfo.labels.length === 0) {
+          await this.addCommentToPR("No labels found, please add one of `major`,`minor` or `patch` labels");
           throw new Error("No labels found");
         }
         // Check if PR has valid labels
