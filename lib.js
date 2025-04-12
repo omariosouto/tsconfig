@@ -248,6 +248,7 @@
           },
           body: JSON.stringify({ body: comment }),
         });
+        console.log(`%%%%% - ${response}`);
         return response;
       },
       async getPRChangelogDescription() {
