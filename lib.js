@@ -193,7 +193,7 @@ ${PACKAGE_JSON.version}
 
     function pushGitTag() {
       log("🤖 - Push git TAG");
-      const gitCommand = `git push origin v${PACKAGE_JSON.version}`;
+      const gitCommand = `git push origin v${PACKAGE_JSON.version} --force`;
 
       DEBUG &&
         log(gitCommand);
