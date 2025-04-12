@@ -41,12 +41,28 @@
   const actions = {
     "release-it": async () => {
       log("action: release-it");
-      runBuild();
-      updateVersion();
-      syncPackageJSON();
-      updateChangelog();
-      createGitTag();
-      await mergePR(); // 🚫
+      const commentID = await gh.addCommentToPR(`Creating a beta release...`);
+      runBuild();        // ✅
+      updateVersion();   // ✅
+      syncPackageJSON(); // ✅
+      updateChangelog(); // ✅
+      createGitCommit(); // ✅
+      createGitTag();    // ✅
+      pushGitTag();      // ✅
+      publishVersion();  // ✅
+      // TODO: Check if we are able to merge the PR
+      pushToPR();        // ✅
+      // await mergePR(); // 🚫
+      await gh.updateCommentOnPR(commentID, (`
+        Release created successfully!
+              
+        - **Package**: [\`${PACKAGE_JSON.name}\`](https://github.com/omariosouto/tsconfig/releases/tag/v${PACKAGE_JSON.version})
+        - **Version**:
+        \`\`\`sh
+        ${PACKAGE_JSON.version}
+        \`\`\`
+        `
+      ));
     },
     "release-beta": async () => {
       log("action: release-beta");
@@ -97,6 +113,14 @@ ${PACKAGE_JSON.version}
     !DEBUG && execSync(COMMAND_BUILD, { stdio: "inherit" });
   }
 
+  function pushToPR() {
+    log("🤖 - [pushToPR] Pushing to PR");
+    const gitCommand = `git push origin HEAD:${process.env.GITHUB_REF}`;
+
+    DEBUG && log(gitCommand);
+    !DEBUG && execSync(gitCommand, { stdio: "inherit" });
+  }
+
   function publishVersion() {
     log("🤖 - [publishVersion] Publishing version");
     const isBetaVersion = PACKAGE_JSON.version.includes("beta");
@@ -113,7 +137,7 @@ ${PACKAGE_JSON.version}
     log("🤖 - Merging the PR");
     const data = await gh.mergePR();
     console.log("mergePR", data);
-    if(data?.status?.startsWith("4") || data?.status?.startsWith("5")) {
+    if (data?.status?.startsWith("4") || data?.status?.startsWith("5")) {
       throw new Error(data.message);
     }
   }
