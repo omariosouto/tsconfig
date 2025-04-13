@@ -1,3 +1,8 @@
+# 1.13.10 - 2025-4-13
+
+Here you specify what exactly will be added to the changelog of the new version.
+
+
 # 1.13.9 - 2025-4-13
 
 This PR is just to test the integration with bumper through NPX
