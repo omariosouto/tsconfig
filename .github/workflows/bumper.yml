@@ -8,6 +8,7 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
+  packages: write
 
 jobs:
   on-pr-comment:
@@ -19,8 +20,9 @@ jobs:
         id: create-app-token
         uses: actions/create-github-app-token@v1
         with:
-          app_id: ${{ secrets.GH_APP_ID }}
-          private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          permission-packages: write
           # Optionally specify which repository permissions you need.
           # See https://github.com/actions/create-github-app-token#inputs
           # e.g., permissions: 'contents:write, pull-requests:write, issues:write'
@@ -66,14 +68,19 @@ jobs:
           echo "========"
 
           # Optionally set up a custom .npmrc if needed for private npm usage
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_REGISTRY_TOKEN }}" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ env.GH_REGISTRY_TOKEN }}" > ~/.npmrc
+          npm config set @omariosouto:registry https://npm.pkg.github.com
+
+          echo "Checking .npmrc"
+          cat ~/.npmrc
+          echo "========"
 
           # Run the bumper script
           npm run bumper
         env:
           # Use the App token for any Git/GitHub operations
-          GITHUB_TOKEN: ${{ steps.create-app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.create-app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.issue.number }}
           PR_COMMENT: ${{ github.event.comment.body }}
-          GH_REGISTRY_TOKEN: ${{ secrets.GH_REGISTRY_TOKEN }}
+          GH_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH_NAME: ${{ env.BRANCH_NAME }}
