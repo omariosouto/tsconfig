@@ -82,5 +82,6 @@ jobs:
           GH_TOKEN: ${{ steps.create-app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.issue.number }}
           PR_COMMENT: ${{ github.event.comment.body }}
-          GH_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GH_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REGISTRY_TOKEN: ${{ steps.create-app-token.outputs.token }}
           BRANCH_NAME: ${{ env.BRANCH_NAME }}
