@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
     // Target and module settings
-    "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": ["ESNext", "DOM"],
     // Strictness & type checking
     "strict": true, // Enables all strict type-checking options below
