@@ -1,3 +1,9 @@
+# 2.0.1 - 2025-4-13
+
+This pull request includes an update to the TypeScript configuration in the `packages/lib/config.json` file to improve compatibility with modern JavaScript features.
+* [`packages/lib/config.json`](diffhunk://#diff-0c81b2177887592c6dc72ebc072fb2c3549bf853837d2f440c05e29ad6c8887dR4): Updated the `target` option to `ESNext` to ensure the compiler uses the latest ECMAScript features.
+
+
 # 2.0.0 - 2025-4-13
 
 This pull request includes updates to the `packages/lib/config.json` configuration file to change the module resolution strategy.
