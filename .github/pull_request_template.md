@@ -14,11 +14,11 @@
 
 ## Lib Management
 
-| Commands to manage releases |
+| Commands to manage version bumps |
 | --- |
-| bumper/release-it   |
-| bumper/release-beta |
-| bumper/skip-release |
+| bumper/release |
+| bumper/beta    |
+| bumper/skip    |
 
 ## Changelog
 
