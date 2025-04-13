@@ -1,6 +1,6 @@
 {
   "name": "@omariosouto/tsconfig",
-  "version": "1.13.8",
+  "version": "1.13.9-beta20254131744511512PR12",
   "main": "index.json",
   "license": "MIT",
   "repository": "https://github.com/omariosouto/tsconfig",
