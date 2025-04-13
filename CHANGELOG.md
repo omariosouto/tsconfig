@@ -1,3 +1,10 @@
+# 2.0.0 - 2025-4-13
+
+This pull request includes updates to the `packages/lib/config.json` configuration file to change the module resolution strategy.
+Configuration updates:
+* [`packages/lib/config.json`](diffhunk://#diff-0c81b2177887592c6dc72ebc072fb2c3549bf853837d2f440c05e29ad6c8887dL4-R5): Changed the `moduleResolution` setting from `node` to `bundler` to align with the new module resolution strategy.
+
+
 # 1.13.11 - 2025-4-13
 
 Here you specify what exactly will be added to the changelog of the new version.
