@@ -1,3 +1,8 @@
+# 2.0.2 - 2025-4-24
+
+This pull request includes a small but important change to the TypeScript configuration in `packages/lib/config.json`. The change enables the `noUncheckedIndexedAccess` compiler option, which improves type safety by requiring explicit checks for undefined when accessing array or object elements via an index.
+
+
 # 2.0.1 - 2025-4-13
 
 This pull request includes an update to the TypeScript configuration in the `packages/lib/config.json` file to improve compatibility with modern JavaScript features.
